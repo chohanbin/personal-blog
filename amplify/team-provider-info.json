@@ -14,6 +14,9 @@
     "categories": {
       "auth": {
         "personalblog1e7b11c1": {}
+      },
+      "api": {
+        "personalblog": {}
       }
     }
   }
