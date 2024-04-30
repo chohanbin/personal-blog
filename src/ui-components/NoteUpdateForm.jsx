@@ -9,13 +9,13 @@ import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getTodo } from "../graphql/queries";
-import { updateTodo } from "../graphql/mutations";
+import { getNote } from "../graphql/queries";
+import { updateNote } from "../graphql/mutations";
 const client = generateClient();
-export default function TodoUpdateForm(props) {
+export default function NoteUpdateForm(props) {
   const {
     id: idProp,
-    todo: todoModelProp,
+    note: noteModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -36,30 +36,30 @@ export default function TodoUpdateForm(props) {
   const [image, setImage] = React.useState(initialValues.image);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = todoRecord
-      ? { ...initialValues, ...todoRecord }
+    const cleanValues = noteRecord
+      ? { ...initialValues, ...noteRecord }
       : initialValues;
     setName(cleanValues.name);
     setDescription(cleanValues.description);
     setImage(cleanValues.image);
     setErrors({});
   };
-  const [todoRecord, setTodoRecord] = React.useState(todoModelProp);
+  const [noteRecord, setNoteRecord] = React.useState(noteModelProp);
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
         ? (
             await client.graphql({
-              query: getTodo.replaceAll("__typename", ""),
+              query: getNote.replaceAll("__typename", ""),
               variables: { id: idProp },
             })
-          )?.data?.getTodo
-        : todoModelProp;
-      setTodoRecord(record);
+          )?.data?.getNote
+        : noteModelProp;
+      setNoteRecord(record);
     };
     queryData();
-  }, [idProp, todoModelProp]);
-  React.useEffect(resetStateValues, [todoRecord]);
+  }, [idProp, noteModelProp]);
+  React.useEffect(resetStateValues, [noteRecord]);
   const validations = {
     name: [{ type: "Required" }],
     description: [],
@@ -124,10 +124,10 @@ export default function TodoUpdateForm(props) {
             }
           });
           await client.graphql({
-            query: updateTodo.replaceAll("__typename", ""),
+            query: updateNote.replaceAll("__typename", ""),
             variables: {
               input: {
-                id: todoRecord.id,
+                id: noteRecord.id,
                 ...modelFields,
               },
             },
@@ -142,7 +142,7 @@ export default function TodoUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "TodoUpdateForm")}
+      {...getOverrideProps(overrides, "NoteUpdateForm")}
       {...rest}
     >
       <TextField
@@ -234,7 +234,7 @@ export default function TodoUpdateForm(props) {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || todoModelProp)}
+          isDisabled={!(idProp || noteModelProp)}
           {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
@@ -246,7 +246,7 @@ export default function TodoUpdateForm(props) {
             type="submit"
             variation="primary"
             isDisabled={
-              !(idProp || todoModelProp) ||
+              !(idProp || noteModelProp) ||
               Object.values(errors).some((e) => e?.hasError)
             }
             {...getOverrideProps(overrides, "SubmitButton")}
